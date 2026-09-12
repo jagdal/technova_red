@@ -19,8 +19,15 @@ if [ "$APP_ENV" = "prod" ]; then
     php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
   fi
   echo "[entrypoint] cache:warmup..."
-  php bin/console cache:clear --env=prod --no-warmup
-  php bin/console cache:warmup --env=prod
+  if ! php bin/console cache:clear --env=prod --no-warmup; then
+    echo "[entrypoint] ERREUR cache:clear — voir logs ci-dessus"
+    exit 1
+  fi
+  if ! php bin/console cache:warmup --env=prod; then
+    echo "[entrypoint] ERREUR cache:warmup — voir logs ci-dessus"
+    exit 1
+  fi
+  chown -R www-data:www-data var 2>/dev/null || true
 fi
 
 exec docker-php-entrypoint php-fpm

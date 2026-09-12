@@ -1,7 +1,8 @@
 # Backend Symfony — PHP 8.2 FPM
 FROM composer:2 AS composer
 
-FROM php:8.2-fpm AS app
+# bullseye = compatible VPS sans x86-64-v2 (comme MySQL 8.0.32)
+FROM php:8.2-fpm-bullseye AS app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
