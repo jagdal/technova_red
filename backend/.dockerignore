@@ -1,0 +1,18 @@
+vendor/
+var/
+.git/
+.gitignore
+.env
+.env.local
+.env.*.local
+.env.test
+.phpunit.result.cache
+tests/
+phpunit.dist.xml
+docker-compose.yml
+docs/
+*.md
+.dockerignore
+Dockerfile
+# garder docker-entrypoint.sh pour le COPY du Dockerfile
+!docker-entrypoint.sh

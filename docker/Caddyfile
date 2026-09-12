@@ -1,0 +1,15 @@
+# HTTPS automatique (Let's Encrypt) — technovax.store
+# Variables : DOMAIN, ACME_EMAIL (injectées via docker-compose.prod.yml)
+
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN}, www.{$DOMAIN} {
+	encode gzip zstd
+
+	@www host www.{$DOMAIN}
+	redir @www https://{$DOMAIN}{uri} permanent
+
+	reverse_proxy frontend:80
+}

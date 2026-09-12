@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.env
+.env.local
+backend/vendor
+backend/var/cache
+backend/var/log
+backend/.dockerignore
+vendor
+var/cache
+var/log
+.env.local
+.env.local.php

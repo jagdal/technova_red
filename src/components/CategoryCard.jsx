@@ -1,41 +1,27 @@
 import { Link } from "react-router-dom";
+import AppIcon from "./AppIcon";
 import "./CategoryCard.css";
-
-const categoryMeta = {
-  Tablet: {
-    label: "Tablets",
-    description: "Perfect for creativity, browsing, and entertainment.",
-    icon: "📱",
-  },
-  iPhone: {
-    label: "iPhones",
-    description: "Flagship phones with pro cameras and blazing speed.",
-    icon: "📲",
-  },
-  Mac: {
-    label: "MacBooks",
-    description: "Powerful laptops for work, code, and design.",
-    icon: "💻",
-  },
-};
+import { CATEGORY_UI } from "../models/catalogModel";
 
 export default function CategoryCard({ category }) {
-  const meta = categoryMeta[category.id] ?? categoryMeta.Tablet;
+  const meta = CATEGORY_UI[category.name] || {
+    label: category.label || category.name,
+    slug: category.slug || "other",
+    icon: category.icon || "package",
+  };
 
   return (
     <Link
       to={`/products?category=${category.id}`}
-      className={`category-card category-card--${category.slug}`}
+      className={`category-card category-card--${meta.slug}`}
     >
       <div className="category-card-icon">
-        <span>{meta.icon}</span>
+        <AppIcon name={meta.icon} size={24} strokeWidth={1.75} />
       </div>
       <div className="category-card-body">
         <h3 className="category-card-name">{meta.label}</h3>
-        <p className="category-card-desc">{meta.description}</p>
+        <p className="category-card-desc">Découvrir la gamme {meta.label}</p>
       </div>
-    
     </Link>
-    
   );
 }
