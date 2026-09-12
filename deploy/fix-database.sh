@@ -15,8 +15,8 @@ docker volume rm technova_db_data 2>/dev/null || true
 echo "==> Nettoyage fin de ligne Windows (.env.production)"
 sed -i 's/\r$//' "${ENV_FILE}" 2>/dev/null || true
 
-echo "==> Pull image MySQL"
-docker pull mysql:8.0
+echo "==> Pull image MySQL (8.0.32 — compatible CPU sans x86-64-v2)"
+docker pull mysql:8.0.32
 
 echo "==> Démarrage MySQL seul (attendre init ~90s)"
 ${COMPOSE} up -d database

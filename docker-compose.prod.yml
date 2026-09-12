@@ -3,7 +3,8 @@
 
 services:
   database:
-    image: mysql:8.0
+    # 8.0.32 : compatible VPS anciens CPU (sans x86-64-v2)
+    image: mysql:8.0.32
     container_name: technova_database
     restart: unless-stopped
     environment:
