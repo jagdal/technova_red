@@ -2,14 +2,14 @@
 FROM composer:2 AS composer
 
 # bullseye = compatible VPS sans x86-64-v2 (comme MySQL 8.0.32)
-FROM php:8.2-fpm-bullseye AS app
+FROM php:8.2.28-fpm-bullseye AS app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        git \
+# Paquets minimaux (pas de git → évite erreurs apt 404 sur le VPS)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
         unzip \
         libzip-dev \
         libicu-dev \
-        libpng-dev \
         libonig-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install -j$(nproc) \
