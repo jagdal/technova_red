@@ -3,6 +3,11 @@ set -e
 
 cd /var/www/html
 
+# Symfony exige un fichier .env (secrets réels = variables Docker)
+if [ ! -f .env ]; then
+  cp .env.example .env 2>/dev/null || echo "APP_ENV=prod" > .env
+fi
+
 # Si le bind-mount écrase vendor/, on réinstalle
 if [ ! -f vendor/autoload.php ]; then
   echo "[entrypoint] vendor/ manquant — composer install..."

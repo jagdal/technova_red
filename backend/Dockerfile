@@ -1,16 +1,17 @@
-# Backend Symfony — PHP 8.2 FPM
+# Backend Symfony — PHP 8.2 FPM (Alpine = compatible CPU + pas de apt Debian 404)
 FROM composer:2 AS composer
 
-# bullseye = compatible VPS sans x86-64-v2 (comme MySQL 8.0.32)
-FROM php:8.2.28-fpm-bullseye AS app
+FROM php:8.2.28-fpm-alpine AS app
 
-# Paquets minimaux (pas de git → évite erreurs apt 404 sur le VPS)
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+RUN apk add --no-cache \
+        icu-libs \
+        libzip \
         unzip \
+    && apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        icu-dev \
         libzip-dev \
-        libicu-dev \
-        libonig-dev \
+        oniguruma-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install -j$(nproc) \
         intl \
@@ -18,7 +19,8 @@ RUN apt-get update \
         pdo_mysql \
         zip \
         opcache \
-    && rm -rf /var/lib/apt/lists/*
+    && apk del .build-deps \
+    && rm -rf /var/cache/apk/*
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
@@ -30,9 +32,9 @@ COPY config config
 COPY migrations migrations
 COPY public public
 COPY src src
+COPY .env.example .env
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
-# Fix CRLF -> LF (fichiers créés/édités sous Windows) + rendre exécutable
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh \
     && COMPOSER_ALLOW_SUPERUSER=1 composer install \
@@ -45,9 +47,6 @@ RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
     && mkdir -p var/cache var/log var/sessions \
     && chown -R www-data:www-data var \
     && chmod -R 775 var
-
-# Note JWT : ce projet utilise firebase/php-jwt + JWT_SECRET (pas Lexik).
-# Aucun dossier config/jwt/ à générer.
 
 EXPOSE 9000
 
